@@ -114,6 +114,18 @@ use Joaopaulolndev\FilamentEditProfile\Pages\EditProfilePage;
 ])
 ```
 
+If needed you can define the disk and visibility of the avatar image. In the config file add the following:
+
+[config/filament-edit-profile.php](config/filament-edit-profile.php)
+
+```php
+return [
+    'disk' => env('FILESYSTEM_DISK', 'public'),
+    'visibility' => 'public', // or replace by filesystem disk visibility with fallback value
+];
+```
+
+
 ## Profile Avatar
 
 ![Screenshot of avatar Feature](https://raw.githubusercontent.com/joaopaulolndev/filament-edit-profile/main/art/profile-avatar.png)
@@ -135,7 +147,7 @@ protected $fillable = [
     'name',
     'email',
     'password',
-    'avatar_url',
+    'avatar_url', // or column name according to config('filament-edit-profile.avatar_column', 'avatar_url')
 ];
 ```
 
@@ -150,7 +162,8 @@ class User extends Authenticatable implements HasAvatar
     // ...
     public function getFilamentAvatarUrl(): ?string
     {
-        return $this->avatar_url ? Storage::url("$this->avatar_url") : null;
+        $avatarColumn = config('filament-edit-profile.avatar_column', 'avatar_url');
+        return $this->$avatarColumn ? Storage::url("$this->$avatarColumn") : null;
     }
 }
 ```

@@ -28,7 +28,7 @@ class EditProfileForm extends BaseProfileForm
 
         $this->userClass = get_class($this->user);
 
-        $this->form->fill($this->user->only('avatar_url', 'name', 'email'));
+        $this->form->fill($this->user->only(config('filament-edit-profile.avatar_column', 'avatar_url'), 'name', 'email'));
     }
 
     public function form(Form $form): Form
@@ -39,10 +39,12 @@ class EditProfileForm extends BaseProfileForm
                     ->aside()
                     ->description(__('filament-edit-profile::default.profile_information_description'))
                     ->schema([
-                        FileUpload::make('avatar_url')
+                        FileUpload::make(config('filament-edit-profile.avatar_column', 'avatar_url'))
                             ->label(__('filament-edit-profile::default.avatar'))
                             ->avatar()
                             ->imageEditor()
+                            ->disk(config('filament-edit-profile.disk', 'public'))
+                            ->visibility(config('filament-edit-profile.visibility', 'public'))
                             ->directory(filament('filament-edit-profile')->getAvatarDirectory())
                             ->rules(filament('filament-edit-profile')->getAvatarRules())
                             ->hidden(! filament('filament-edit-profile')->getShouldShowAvatarForm()),
